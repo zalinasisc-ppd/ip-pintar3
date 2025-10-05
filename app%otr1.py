@@ -48,10 +48,10 @@ def compute_ipmp(df: pd.DataFrame) -> pd.DataFrame:
             df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
 
     # Calculations
-    df["Beza GPMP (OTR1 - PPT)"] = df["% L OTR1"] - df["% L PPT"]
+    df["Beza GPMP (PPT - OTR1)"] = df["% L PPT"] - df["% L OTR1"]
     total_ambil = df["Bil. Ambil"].sum()
     df["Pemberat"] = np.where(total_ambil > 0, df["Bil. Ambil"] / total_ambil, 0.0)
-    df["IPMP"] = df["Beza GPMP (OTR1 - PPT)"] * df["Pemberat"]
+    df["IPMP"] = df["Beza GPMP (PPT - OTR1)"] * df["Pemberat"]
 
     # Ranking (tinggi ke rendah)
     df["Ranking"] = df["IPMP"].rank(method="min", ascending=False).astype(int)
@@ -60,7 +60,7 @@ def compute_ipmp(df: pd.DataFrame) -> pd.DataFrame:
     cols = [
         "Mata Pelajaran", "Bil. Daftar", "Bil. Ambil",
         "% L PPT", "% L OTR1",
-        "Beza GPMP (OTR1 - PPT)", "Pemberat", "IPMP", "Ranking"
+        "Beza GPMP (PPT - OTR1)", "Pemberat", "IPMP", "Ranking"
     ]
     df = df[[c for c in cols if c in df.columns]].sort_values("Ranking")
     return df
